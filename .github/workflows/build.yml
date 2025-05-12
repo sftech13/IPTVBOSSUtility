@@ -78,7 +78,7 @@ jobs:
           name: "IPTV Checker ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
           files: |
-            iptv-stream-checker-deb/iptv_gui_deb.deb
-            iptv-stream-checker-exe/iptv_gui_full.exe
+            iptv-stream-checker-deb/iptv_gui_deb.deb#iptv_gui_${{ github.ref_name }}.deb
+            iptv-stream-checker-exe/iptv_gui_full.exe#iptv_gui_${{ github.ref_name }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
