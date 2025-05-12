@@ -1,12 +1,10 @@
-# Use Python 3.8 slim base
-FROM python:3.8-slim-bullseye
+FROM python:3.8-slim
 
 LABEL maintainer="SFTech13" \
-    description="Docker-based IPTV Stream Checker Builder"
+    description="IPTV Stream Checker Builder"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
 RUN apt-get update &&
     apt-get install -y --no-install-recommends \
         python3-tk \
@@ -28,20 +26,9 @@ RUN apt-get update &&
     apt-get clean &&
     rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
-
-# Copy project
-COPY . .
-
-# Make build script executable
+COPY . /app
 RUN chmod +x build_deb.sh
+RUN GITHUB_REF_NAME=dev ./build_deb.sh
 
-# Build inside container (fallback tag if not provided)
-ARG GITHUB_REF_NAME=dev
-ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
-
-RUN ./build_deb.sh
-
-# Optional: default command (remove if not using interactively)
 CMD ["/bin/bash"]
