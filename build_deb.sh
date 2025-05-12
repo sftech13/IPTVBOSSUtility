@@ -34,9 +34,7 @@ echo "🧹 Cleaning build folders..."
 rm -rf build dist "$BUILD_DIR" *.spec
 
 echo "🛠  Building standalone binary with PyInstaller..."
-pyinstaller --onefile --windowed \
-    --add-binary "$PY_SO:." \
-    "$SOURCE_PY"
+pyinstaller --onefile --windowed --clean --exclude-module _bootlocale "$SOURCE_PY"
 
 # === Package Setup ===
 echo "📦 Setting up .deb structure..."
