@@ -73,15 +73,20 @@ jobs:
         run: |
           docker build -t iptv-checker:latest .
 
-      - name: 📦 Save Docker Image
-        run: |
-          docker save iptv-checker:latest -o iptv_checker_docker.tar
+      - name: 🚀 Create Docker Container
+        run: docker create --name iptv-container iptv-checker:latest
 
-      - name: 🔗 Upload Docker Image
+      - name: 📤 Copy DEB from Container
+        run: docker cp iptv-container:/app/iptv_gui_vdev.deb ./iptv_gui_vdev.deb
+
+      - name: 🧹 Clean Up Container
+        run: docker rm iptv-container
+
+      - name: 🔗 Upload Docker .deb Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iptv-checker-docker
-          path: iptv_checker_docker.tar
+          name: iptv-docker-deb
+          path: iptv_gui_vdev.deb
 
   release:
     needs: [build-linux, build-windows, docker-build]
@@ -105,7 +110,7 @@ jobs:
       - name: 🔗 Download Docker Artifact
         uses: actions/download-artifact@v4
         with:
-          name: iptv-checker-docker
+          name: iptv-docker-deb
           path: ./release
 
       - name: 🎉 Create GitHub Release
@@ -116,6 +121,6 @@ jobs:
           files: |
             release/iptv_gui_v*.deb
             release/iptv_gui_full.exe
-            release/iptv_checker_docker.tar
+            release/iptv_gui_vdev.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
