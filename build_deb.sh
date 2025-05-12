@@ -30,11 +30,11 @@ echo "🧹 Cleaning build folders..."
 rm -rf build dist "$BUILD_DIR" *.spec
 
 # === BUILD EXECUTABLE ===
-echo "🛠 Building standalone binary with PyInstaller..."
+echo "🛠 Building fully self-contained binary with PyInstaller..."
 pyinstaller --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
 
 # === Package Setup ===
-echo "📦 Setting up .deb structure..."
+echo "📦 Setting up .deb package structure..."
 mkdir -p "$BIN_PATH" "$ICON_DEST" "$(dirname "$DESKTOP_FILE")"
 
 echo "📦 Copying built binary..."
@@ -44,7 +44,7 @@ chmod +x "$BIN_PATH/$DISPLAY_NAME"
 echo "🖼 Copying icon..."
 cp "$ICON_FILE" "$ICON_DEST/${ICON_NAME}.png"
 
-echo "🖥 Creating desktop entry..."
+echo "🖥 Creating desktop launcher..."
 cat <<EOF >"$DESKTOP_FILE"
 [Desktop Entry]
 Name=IPTV Stream Checker
@@ -55,7 +55,7 @@ Type=Application
 Categories=Utility;Video;
 EOF
 
-echo "📋 Writing DEBIAN control file..."
+echo "📋 Writing control file..."
 mkdir -p "$BUILD_DIR/DEBIAN"
 cat <<EOF >"$BUILD_DIR/DEBIAN/control"
 Package: iptv-stream-checker
@@ -71,14 +71,14 @@ EOF
 echo "📦 Building .deb package..."
 dpkg-deb --build "$BUILD_DIR"
 
-# === Rename for GitHub Releases if applicable ===
+# === Rename .deb file for tagging (GitHub) ===
 if [[ -n "$GITHUB_REF_NAME" ]]; then
-    mv "${BUILD_DIR}.deb" "iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
-    FINAL_DEB="iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
+    FINAL_NAME="iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
+    mv "${BUILD_DIR}.deb" "$FINAL_NAME"
 else
-    FINAL_DEB="${BUILD_DIR}.deb"
+    FINAL_NAME="${BUILD_DIR}.deb"
 fi
 
 echo "✅ Done! Built:"
 echo " - Binary:     dist/$APP_NAME"
-echo " - Debian pkg: $FINAL_DEB"
+echo " - Debian pkg: $FINAL_NAME"
