@@ -12,7 +12,6 @@ ICON_NAME="iptv_gui"
 ICON_FILE="iptv_icon.png"
 DESKTOP_FILE="$BUILD_DIR/usr/share/applications/${ICON_NAME}.desktop"
 ICON_DEST="$BUILD_DIR/usr/share/icons/hicolor/256x256/apps"
-PY_SO="$(find /usr/lib -name 'libpython3.8.so.1.0' 2>/dev/null | head -n 1)"
 
 # === VALIDATION ===
 cd "$(dirname "$0")"
@@ -21,20 +20,18 @@ cd "$(dirname "$0")"
     echo "❌ Source file '$SOURCE_PY' not found"
     exit 1
 }
+
 [[ -f "$ICON_FILE" ]] || {
     echo "❌ Icon file '$ICON_FILE' not found"
-    exit 1
-}
-[[ -n "$PY_SO" ]] || {
-    echo "❌ Python shared lib 'libpython3.8.so.1.0' not found"
     exit 1
 }
 
 echo "🧹 Cleaning build folders..."
 rm -rf build dist "$BUILD_DIR" *.spec
 
-echo "🛠  Building standalone binary with PyInstaller..."
-pyinstaller --onefile --windowed --clean --exclude-module _bootlocale "$SOURCE_PY"
+# === BUILD EXECUTABLE ===
+echo "🛠 Building standalone binary with PyInstaller..."
+pyinstaller --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
 
 # === Package Setup ===
 echo "📦 Setting up .deb structure..."
@@ -44,10 +41,10 @@ echo "📦 Copying built binary..."
 cp "dist/$APP_NAME" "$BIN_PATH/$DISPLAY_NAME"
 chmod +x "$BIN_PATH/$DISPLAY_NAME"
 
-echo "🖼  Copying icon..."
+echo "🖼 Copying icon..."
 cp "$ICON_FILE" "$ICON_DEST/${ICON_NAME}.png"
 
-echo "🖥  Creating desktop entry..."
+echo "🖥 Creating desktop entry..."
 cat <<EOF >"$DESKTOP_FILE"
 [Desktop Entry]
 Name=IPTV Stream Checker
@@ -58,7 +55,7 @@ Type=Application
 Categories=Utility;Video;
 EOF
 
-echo "📋 Writing control file..."
+echo "📋 Writing DEBIAN control file..."
 mkdir -p "$BUILD_DIR/DEBIAN"
 cat <<EOF >"$BUILD_DIR/DEBIAN/control"
 Package: iptv-stream-checker
