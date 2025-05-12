@@ -68,6 +68,7 @@ Section: base
 Priority: optional
 Architecture: amd64
 Maintainer: SFTech13
+Depends: python3 (>= 3.8), python3-tk, ffmpeg
 Description: IPTV Stream Quality Checker
  A simple IPTV checking tool with GUI for .m3u playlists.
 EOF
