@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="IPTV Stream Checker" Language="1033" Version="1.0.0"
+        Manufacturer="YourCompany" UpgradeCode="F3A1B6F2-59F5-4B6B-8D57-1F72A9DA6232">
+
+        <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+        <MediaTemplate />
+
+        <Feature Id="ProductFeature" Title="IPTV Stream Checker" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+        </Feature>
+
+    </Product>
+
+    <Fragment>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="IPTV Stream Checker" />
+            </Directory>
+            <Directory Id="DesktopFolder" />
+        </Directory>
+    </Fragment>
+
+    <Fragment>
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <Component Id="MainExecutable" Guid="*">
+                <File Source="dist\iptv_gui_full.exe" KeyPath="yes" />
+                <Shortcut Id="desktopShortcut" Directory="DesktopFolder"
+                    Name="IPTV Stream Checker" WorkingDirectory="INSTALLFOLDER"
+                    Icon="AppIcon.ico" Advertise="no" Target="[INSTALLFOLDER]iptv_gui_full.exe" />
+                <RemoveFile Id="RemoveShortcut" Directory="DesktopFolder"
+                    Name="IPTV Stream Checker.lnk" On="uninstall" />
+                <RegistryValue Root="HKCU" Key="Software\IPTVChecker" Name="Installed"
+                    Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+            <Component Id="Icon" Guid="*">
+                <File Id="AppIcon.ico" Source="iptv_icon.ico" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

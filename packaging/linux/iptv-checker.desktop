@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=IPTV Stream Checker
+Comment=Check and validate IPTV streams from M3U playlists
+Exec=/usr/local/bin/IPTV-Stream-Checker
+Icon=iptv_gui
+Type=Application
+Categories=Utility;Video;
+Terminal=false
+StartupNotify=true
+Keywords=IPTV;Stream;Playlist;Checker;

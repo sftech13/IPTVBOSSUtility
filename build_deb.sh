@@ -1,8 +1,6 @@
 #!/bin/bash
+set -e
 
-set -e # Exit on error
-
-# === CONFIG ===
 APP_NAME="iptv_gui_full"
 DISPLAY_NAME="IPTV-Stream-Checker"
 SOURCE_PY="${APP_NAME}.py"
@@ -13,7 +11,6 @@ ICON_FILE="iptv_icon.png"
 DESKTOP_FILE="$BUILD_DIR/usr/share/applications/${ICON_NAME}.desktop"
 ICON_DEST="$BUILD_DIR/usr/share/icons/hicolor/256x256/apps"
 
-# === VALIDATION ===
 cd "$(dirname "$0")"
 
 if [[ ! -f "$SOURCE_PY" ]]; then
@@ -26,15 +23,12 @@ if [[ ! -f "$ICON_FILE" ]]; then
     exit 1
 fi
 
-# === CLEAN ===
 echo "🧹 Cleaning previous builds..."
 rm -rf build dist "$BUILD_DIR" *.spec
 
-# === BUILD EXECUTABLE ===
 echo "🛠 Building PyInstaller binary..."
 pyinstaller --noconfirm --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
 
-# === PACKAGE STRUCTURE ===
 echo "📦 Creating .deb directory structure..."
 mkdir -p "$BIN_PATH" "$ICON_DEST" "$(dirname "$DESKTOP_FILE")"
 
@@ -70,19 +64,24 @@ Description: IPTV Stream Quality Checker
  A simple IPTV checking tool with GUI for .m3u playlists.
 EOF
 
+echo "📜 Adding postinst script..."
+cat <<'EOF' >"$BUILD_DIR/DEBIAN/postinst"
+#!/bin/bash
+set -e
+echo "🔧 Ensuring required dependencies are present..."
+apt-get update
+apt-get install -y python3 python3-tk ffmpeg
+exit 0
+EOF
+chmod +x "$BUILD_DIR/DEBIAN/postinst"
+
 echo "📦 Building .deb package..."
 dpkg-deb --build "$BUILD_DIR"
 
-# === VERSIONED RENAME ===
-if [[ -n "$GITHUB_REF_NAME" ]]; then
-    VERSION_TAG="${GITHUB_REF_NAME#refs/tags/}"
-    FINAL_NAME="iptv_gui_v${VERSION_TAG}.deb"
-    mv "${BUILD_DIR}.deb" "$FINAL_NAME"
-else
-    FINAL_NAME="${BUILD_DIR}.deb"
-fi
+VERSION_TAG="${GITHUB_REF_NAME:-1.0}"
+FINAL_NAME="iptv_gui_v${VERSION_TAG}.deb"
+mv "${BUILD_DIR}.deb" "$FINAL_NAME"
 
-# === DONE ===
 echo "✅ Done! Build Summary:"
 echo " - Binary:     dist/$APP_NAME"
 echo " - Debian pkg: $FINAL_NAME"

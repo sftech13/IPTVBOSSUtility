@@ -37,7 +37,7 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    name: Build .exe on Windows
+    name: Build .msi on Windows
     steps:
       - name: ✏️ Checkout Code
         uses: actions/checkout@v3
@@ -50,17 +50,21 @@ jobs:
       - name: ♻️ Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller
+          pip install cx_Freeze
 
       - name: 💼 Build Windows Executable
         run: |
-          pyinstaller --onefile --windowed iptv_gui_full.py
+          python setup.py build
 
-      - name: 🔗 Upload .exe Artifact
+      - name: 📦 Build MSI Installer
+        run: |
+          python setup.py bdist_msi
+
+      - name: 🔗 Upload .msi Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iptv-stream-checker-exe
-          path: dist/iptv_gui_full.exe
+          name: iptv-stream-checker-msi
+          path: dist/*.msi
 
   docker-build:
     runs-on: ubuntu-latest
@@ -73,20 +77,15 @@ jobs:
         run: |
           docker build -t iptv-checker:latest .
 
-      - name: 🚀 Create Docker Container
-        run: docker create --name iptv-container iptv-checker:latest
+      - name: 📦 Save Docker Image
+        run: |
+          docker save iptv-checker:latest -o iptv_checker_docker.tar
 
-      - name: 📤 Copy DEB from Container
-        run: docker cp iptv-container:/app/iptv_gui_vdev.deb ./iptv_gui_vdev.deb
-
-      - name: 🧹 Clean Up Container
-        run: docker rm iptv-container
-
-      - name: 🔗 Upload Docker .deb Artifact
+      - name: 🔗 Upload Docker Image
         uses: actions/upload-artifact@v4
         with:
-          name: iptv-docker-deb
-          path: iptv_gui_vdev.deb
+          name: iptv-checker-docker
+          path: iptv_checker_docker.tar
 
   release:
     needs: [build-linux, build-windows, docker-build]
@@ -104,13 +103,13 @@ jobs:
       - name: 🔗 Download Windows Artifact
         uses: actions/download-artifact@v4
         with:
-          name: iptv-stream-checker-exe
+          name: iptv-stream-checker-msi
           path: ./release
 
       - name: 🔗 Download Docker Artifact
         uses: actions/download-artifact@v4
         with:
-          name: iptv-docker-deb
+          name: iptv-checker-docker
           path: ./release
 
       - name: 🎉 Create GitHub Release
@@ -120,7 +119,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: |
             release/iptv_gui_v*.deb
-            release/iptv_gui_full.exe
-            release/iptv_gui_vdev.deb
+            release/iptv_gui_installer.msi
+            release/iptv_checker_docker.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

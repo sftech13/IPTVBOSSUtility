@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+echo "🔧 Verifying dependencies..."
+
+missing=()
+
+for pkg in python3 python3-tk ffmpeg; do
+    if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+        missing+=("$pkg")
+    fi
+done
+
+if [ "${#missing[@]}" -gt 0 ]; then
+    echo "📦 Installing missing packages: ${missing[*]}"
+    apt-get install -y "${missing[@]}"
+else
+    echo "✅ All required packages are already installed."
+fi
+
+echo "🎉 IPTV Stream Checker installed successfully."
+exit 0
