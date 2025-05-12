@@ -62,8 +62,29 @@ jobs:
           name: iptv-stream-checker-exe
           path: dist/iptv_gui_full.exe
 
+  docker-build:
+    runs-on: ubuntu-latest
+    name: Build Docker Image
+    steps:
+      - name: ✏️ Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐳 Build Docker Image
+        run: |
+          docker build -t iptv-checker:latest .
+
+      - name: 📦 Save Docker Image
+        run: |
+          docker save iptv-checker:latest -o iptv_checker_docker.tar
+
+      - name: 🔗 Upload Docker Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: iptv-checker-docker
+          path: iptv_checker_docker.tar
+
   release:
-    needs: [build-linux, build-windows]
+    needs: [build-linux, build-windows, docker-build]
     runs-on: ubuntu-latest
     steps:
       - name: ✏️ Checkout Code
@@ -81,6 +102,12 @@ jobs:
           name: iptv-stream-checker-exe
           path: ./release
 
+      - name: 🔗 Download Docker Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: iptv-checker-docker
+          path: ./release
+
       - name: 🎉 Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -89,5 +116,6 @@ jobs:
           files: |
             release/iptv_gui_v*.deb
             release/iptv_gui_full.exe
+            release/iptv_checker_docker.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
