@@ -73,8 +73,8 @@ dpkg-deb --build "$BUILD_DIR"
 
 # === Rename for GitHub Releases if applicable ===
 if [[ -n "$GITHUB_REF_NAME" ]]; then
-    mv "${BUILD_DIR}.deb" "iptv_gui_v${GITHUB_REF_NAME#refs/tags/}.deb"
-    FINAL_DEB="iptv_gui_v${GITHUB_REF_NAME#refs/tags/}.deb"
+    mv "${BUILD_DIR}.deb" "iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
+    FINAL_DEB="iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
 else
     FINAL_DEB="${BUILD_DIR}.deb"
 fi
