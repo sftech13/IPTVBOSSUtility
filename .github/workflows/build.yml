@@ -1,0 +1,84 @@
+name: Build IPTV Checker
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    name: Build .deb on Ubuntu
+    steps:
+      - name: ✏️ Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: ♻️ Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-tk python3-pip python3-venv libpython3.8
+          pip install pyinstaller
+
+      - name: 💼 Build Debian Package
+        run: |
+          chmod +x build_deb.sh
+          ./build_deb.sh
+
+      - name: 🔗 Upload .deb Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iptv-stream-checker-deb
+          path: iptv_gui_deb.deb
+
+  build-windows:
+    runs-on: windows-latest
+    name: Build .exe on Windows
+    steps:
+      - name: ✏️ Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: ♻️ Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: 💼 Build Windows Executable
+        run: |
+          pyinstaller --onefile --windowed iptv_gui_full.py
+
+      - name: 🔗 Upload .exe Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iptv-stream-checker-exe
+          path: dist/iptv_gui_full.exe
+
+  release:
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✏️ Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🔗 Download All Artifacts
+        uses: actions/download-artifact@v4
+
+      - name: 🎉 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "IPTV Checker ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
+          files: |
+            iptv-stream-checker-deb/iptv_gui_deb.deb
+            iptv-stream-checker-exe/iptv_gui_full.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
