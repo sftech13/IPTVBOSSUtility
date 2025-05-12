@@ -71,6 +71,14 @@ EOF
 echo "📦 Building .deb package..."
 dpkg-deb --build "$BUILD_DIR"
 
+# === Rename for GitHub Releases if applicable ===
+if [[ -n "$GITHUB_REF_NAME" ]]; then
+    mv "${BUILD_DIR}.deb" "iptv_gui_v${GITHUB_REF_NAME#refs/tags/}.deb"
+    FINAL_DEB="iptv_gui_v${GITHUB_REF_NAME#refs/tags/}.deb"
+else
+    FINAL_DEB="${BUILD_DIR}.deb"
+fi
+
 echo "✅ Done! Built:"
 echo " - Binary:     dist/$APP_NAME"
-echo " - Debian pkg: $BUILD_DIR.deb"
+echo " - Debian pkg: $FINAL_DEB"
