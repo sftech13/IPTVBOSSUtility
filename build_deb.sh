@@ -33,7 +33,12 @@ echo "📦 Creating .deb directory structure..."
 mkdir -p "$BIN_PATH" "$ICON_DEST" "$(dirname "$DESKTOP_FILE")"
 
 echo "📦 Copying binary..."
-cp "dist/$APP_NAME" "$BIN_PATH/$DISPLAY_NAME"
+# Make it portable with staticx
+echo "📦 Creating statically linked binary with staticx..."
+staticx "dist/$APP_NAME" "dist/${APP_NAME}_static"
+
+# Copy the portable binary into the package
+cp "dist/${APP_NAME}_static" "$BIN_PATH/$DISPLAY_NAME"
 chmod +x "$BIN_PATH/$DISPLAY_NAME"
 
 echo "🖼 Installing icon..."
