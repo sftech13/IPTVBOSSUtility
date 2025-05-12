@@ -27,7 +27,7 @@ jobs:
       - name: 💼 Build Debian Package
         run: |
           chmod +x build_deb.sh
-          ./build_deb.sh
+          GITHUB_REF_NAME="${GITHUB_REF##*/}" ./build_deb.sh
 
       - name: 🔗 Upload .deb Artifact
         uses: actions/upload-artifact@v4
