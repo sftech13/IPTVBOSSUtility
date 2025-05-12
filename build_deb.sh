@@ -26,24 +26,33 @@ cd "$(dirname "$0")"
     exit 1
 }
 
+# === CLEAN ===
 echo "🧹 Cleaning build folders..."
 rm -rf build dist "$BUILD_DIR" *.spec
 
 # === BUILD EXECUTABLE ===
-echo "🛠 Building fully self-contained binary with PyInstaller..."
-pyinstaller --onefile --windowed --clean --hidden-import=tkinter --static-libpython "$SOURCE_PY"
+echo "🛠 Building PyInstaller binary..."
+pyinstaller --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
 
-# === Package Setup ===
+# === STATICX ===
+echo "📦 Making binary fully static with staticx..."
+pip show staticx >/dev/null 2>&1 || pip install staticx
+STATIC_BIN="dist/${APP_NAME}_static"
+staticx "dist/$APP_NAME" "$STATIC_BIN"
+
+# === PACKAGE SETUP ===
 echo "📦 Setting up .deb package structure..."
 mkdir -p "$BIN_PATH" "$ICON_DEST" "$(dirname "$DESKTOP_FILE")"
 
-echo "📦 Copying built binary..."
-cp "dist/$APP_NAME" "$BIN_PATH/$DISPLAY_NAME"
+echo "📦 Copying built static binary..."
+cp "$STATIC_BIN" "$BIN_PATH/$DISPLAY_NAME"
 chmod +x "$BIN_PATH/$DISPLAY_NAME"
 
+# === ICON ===
 echo "🖼 Copying icon..."
 cp "$ICON_FILE" "$ICON_DEST/${ICON_NAME}.png"
 
+# === DESKTOP ENTRY ===
 echo "🖥 Creating desktop launcher..."
 cat <<EOF >"$DESKTOP_FILE"
 [Desktop Entry]
@@ -55,6 +64,7 @@ Type=Application
 Categories=Utility;Video;
 EOF
 
+# === CONTROL FILE ===
 echo "📋 Writing control file..."
 mkdir -p "$BUILD_DIR/DEBIAN"
 cat <<EOF >"$BUILD_DIR/DEBIAN/control"
@@ -68,10 +78,11 @@ Description: IPTV Stream Quality Checker
  A simple IPTV checking tool with GUI for .m3u playlists.
 EOF
 
+# === BUILD DEB ===
 echo "📦 Building .deb package..."
 dpkg-deb --build "$BUILD_DIR"
 
-# === Rename .deb file for tagging (GitHub) ===
+# === RENAME FOR RELEASE ===
 if [[ -n "$GITHUB_REF_NAME" ]]; then
     FINAL_NAME="iptv_gui_${GITHUB_REF_NAME#refs/tags/}.deb"
     mv "${BUILD_DIR}.deb" "$FINAL_NAME"
@@ -79,6 +90,7 @@ else
     FINAL_NAME="${BUILD_DIR}.deb"
 fi
 
+# === DONE ===
 echo "✅ Done! Built:"
-echo " - Binary:     dist/$APP_NAME"
-echo " - Debian pkg: $FINAL_NAME"
+echo " - Static binary: $STATIC_BIN"
+echo " - Debian pkg:   $FINAL_NAME"
