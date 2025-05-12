@@ -7,8 +7,8 @@ LABEL maintainer="SFTech13" \
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system dependencies
-RUN apt-get update &&
-    RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         python3-tk \
         ffmpeg \
         tk \
@@ -23,10 +23,11 @@ RUN apt-get update &&
         libgl1 \
         libglib2.0-0 \
         git \
-        curl &&
-    RUN pip install --upgrade pip pyinstaller &&
-    RUN apt-get clean &&
-    RUN rm -rf /var/lib/apt/lists/*
+        curl && \
+    pip install --upgrade pip pyinstaller && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # Set working directory
 WORKDIR /app
