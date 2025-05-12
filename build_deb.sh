@@ -31,7 +31,7 @@ rm -rf build dist "$BUILD_DIR" *.spec
 
 # === BUILD EXECUTABLE ===
 echo "🛠 Building fully self-contained binary with PyInstaller..."
-pyinstaller --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
+pyinstaller --onefile --windowed --clean --hidden-import=tkinter --static-libpython "$SOURCE_PY"
 
 # === Package Setup ===
 echo "📦 Setting up .deb package structure..."
