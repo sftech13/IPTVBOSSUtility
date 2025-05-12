@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: iptv-stream-checker-deb
-          path: iptv_gui_deb.deb
+          path: iptv_gui_v*.deb
 
   build-windows:
     runs-on: windows-latest
@@ -69,8 +69,17 @@ jobs:
       - name: ✏️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🔗 Download All Artifacts
+      - name: 🔗 Download Linux Artifact
         uses: actions/download-artifact@v4
+        with:
+          name: iptv-stream-checker-deb
+          path: ./release
+
+      - name: 🔗 Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: iptv-stream-checker-exe
+          path: ./release
 
       - name: 🎉 Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -78,7 +87,7 @@ jobs:
           name: "IPTV Checker ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
           files: |
-            iptv-stream-checker-deb/iptv_gui_deb.deb#iptv_gui_${{ github.ref_name }}.deb
-            iptv-stream-checker-exe/iptv_gui_full.exe#iptv_gui_${{ github.ref_name }}.exe
+            release/iptv_gui_v*.deb
+            release/iptv_gui_full.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
