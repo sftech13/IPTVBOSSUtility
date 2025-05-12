@@ -3,7 +3,7 @@ name: Build IPTV Checker
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build-linux:
@@ -16,12 +16,12 @@ jobs:
       - name: 🔧 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: "3.8"
 
       - name: ♻️ Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-tk python3-pip python3-venv libpython3.8
+          sudo apt install -y python3-tk python3-pip python3-venv
           pip install pyinstaller
 
       - name: 💼 Build Debian Package
@@ -45,7 +45,7 @@ jobs:
       - name: 🔧 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: "3.8"
 
       - name: ♻️ Install Dependencies
         run: |
