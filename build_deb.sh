@@ -34,18 +34,12 @@ rm -rf build dist "$BUILD_DIR" *.spec
 echo "🛠 Building PyInstaller binary..."
 pyinstaller --onefile --windowed --clean --hidden-import=tkinter "$SOURCE_PY"
 
-# === STATICX ===
-#echo "📦 Making binary fully static with staticx..."
-#pip show staticx >/dev/null 2>&1 || pip install staticx
-#STATIC_BIN="dist/${APP_NAME}_static"
-#staticx "dist/$APP_NAME" "$STATIC_BIN"
-
 # === PACKAGE SETUP ===
 echo "📦 Setting up .deb package structure..."
 mkdir -p "$BIN_PATH" "$ICON_DEST" "$(dirname "$DESKTOP_FILE")"
 
-echo "📦 Copying built static binary..."
-#cp "$STATIC_BIN" "$BIN_PATH/$DISPLAY_NAME"
+echo "📦 Copying built binary..."
+cp "dist/$APP_NAME" "$BIN_PATH/$DISPLAY_NAME"
 chmod +x "$BIN_PATH/$DISPLAY_NAME"
 
 # === ICON ===
@@ -92,5 +86,5 @@ fi
 
 # === DONE ===
 echo "✅ Done! Built:"
-echo " - Static binary: $STATIC_BIN"
-echo " - Debian pkg:   $FINAL_NAME"
+echo " - Binary:     dist/$APP_NAME"
+echo " - Debian pkg: $FINAL_NAME"
