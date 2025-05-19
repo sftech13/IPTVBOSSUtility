@@ -1,6 +1,11 @@
-build/
-dist/
-*.spec
+/build/
+/__pycache__/
+/*.spec
 *.deb
-__pycache__/
-*.pyc
+*.exe
+*.tar
+*.zip
+/pyinstaller/
+/pyi_embed/
+/packaging/
+/iptv_gui_deb/
