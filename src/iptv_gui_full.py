@@ -5,7 +5,7 @@ import re
 import sys
 import os
 import subprocess
-from iptv_checker_core import run_check, config, parse_m3u8_file, setup_logging
+from iptv_quality_core import run_check, config, parse_m3u8_file, setup_logging
 import tkinter.font as font
 
 def resource_path(rel_path):
@@ -118,13 +118,13 @@ class IPTVApp:
         # Action dropdown
         ttk.Label(frame, text="Select Action:").grid(row=0, column=0, sticky="w", padx=5)
         actions = [
-            "1 - Kill Process",
-            "2 - Clean Files",
+            "1 - Kill IPTV BOSS Process",
+            "2 - Clean Cache",
             "3 - Run NoGUI Fix",
             "4 - Check Connectivity",
-            "5 - Tail Log",
+            "5 - Check Logs",
             "6 - Move Backups",
-            "7 - Check A/V",
+            "7 - Antivirus Status/Windows Defender",
         ]
         self.maint_var   = tk.StringVar()
         self.maint_combo = ttk.Combobox(frame, textvariable=self.maint_var,
@@ -267,12 +267,12 @@ class IPTVApp:
 
         # Build piped command
         if sys.platform.startswith("win"):
-            script = resource_path("IPTVBossMaintenanceUtility.bat")
+            script = resource_path("win_functions.bat")
             script_call = f'"{script}" {idx}' + (f' {log_arg}' if log_arg else '')
             cmd = f'cmd.exe /c "echo {idx} & echo 8 | {script_call}"'
             use_shell = True
         else:
-            script = resource_path("IPTVBossMaintenanceUtility.sh")
+            script = resource_path("linux_functions.sh")
             script_call = f"bash '{script}' {idx}" + (f' {log_arg}' if log_arg else '')
             cmd = f"printf '{idx}\\n8\\n' | {script_call}"
             use_shell = True
@@ -287,17 +287,17 @@ class IPTVApp:
     def _run_connectivity(self):
         host = "download.iptvboss.pro"
         # DNS
-        self.maint_output.insert(tk.END, "\n[DNS] Resolving download.iptvboss.pro...\n")
+        self.maint_output.insert(tk.END, "\n[DNS] Resolving DNS to IPTV BOSS...\n")
         dns = subprocess.call(["getent", "hosts", host], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.maint_output.insert(tk.END, "[PASS] DNS resolved.\n" if dns == 0 else "[FAIL] DNS resolution failed.\n")
 
         # Ping
-        self.maint_output.insert(tk.END, "\n[PING] Pinging download.iptvboss.pro...\n")
+        self.maint_output.insert(tk.END, "\n[PING] Pinging IPTV BOSS...\n")
         ping = subprocess.call(["ping", "-c", "3", host], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.maint_output.insert(tk.END, "[PASS] Ping successful.\n" if ping == 0 else "[WARN] Ping timed out.\n")
 
         # HTTP
-        self.maint_output.insert(tk.END, "\n[HTTP] HEAD request to https://download.iptvboss.pro...\n")
+        self.maint_output.insert(tk.END, "\n[HTTP] HEAD request to IPTV BOSS...\n")
         code = subprocess.check_output(
             ["curl", "-Ls", "-o", "/dev/null", "-w", "%{http_code}", "https://download.iptvboss.pro"],
             text=True
@@ -336,7 +336,7 @@ class IPTVApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    def center(win, w_pct=0.8, h_pct=0.8):
+    def center(win, w_pct=0.6, h_pct=0.6):
         win.update_idletasks()
         sw, sh = win.winfo_screenwidth(), win.winfo_screenheight()
         w, h   = int(sw*w_pct), int(sh*h_pct)

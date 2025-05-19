@@ -28,7 +28,7 @@ rm -rf build "$BUILD_DIR" *.spec dist
 echo "🛠 Building single Linux binary (with embedded .sh)…"
 pyinstaller --noconfirm --onefile --windowed --clean \
     --hidden-import=tkinter \
-    --add-data="$PWD/src/IPTVBossMaintenanceUtility.sh:." \
+    --add-data="$PWD/src/linux_functions.sh:." \
     "$SOURCE_PY"
 
 echo "📦 Staging .deb layout…"

@@ -29,7 +29,7 @@ wine "$WINE_PYEXE" -m PyInstaller \
     --onefile \
     --windowed \
     --icon="$ICON_NAME" \
-    --add-data "src/IPTVBossMaintenanceUtility.bat;." \
+    --add-data "src/win_functions.bat;." \
     "$SCRIPT_NAME"
 
 # verify
