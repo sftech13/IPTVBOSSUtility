@@ -59,11 +59,26 @@ class IPTVApp:
 
     def setup_checker_tab(self):
         tab = self.checker_tab
-        tab.rowconfigure(1, weight=1)
+        tab.rowconfigure(2, weight=1)
         tab.columnconfigure(0, weight=1)
 
+
+        instruction_text = (
+            "📋 Instructions:\n"
+            "- Load your .m3u playlist file\n"
+            "- Set timeout and max connections\n"
+            "- Optionally choose a category\n"
+            "- Click 'Start Scan' to begin"
+        )
+
+        instruction_label = tk.Label(
+            tab, text=instruction_text, justify="left", anchor="w",
+            font=self.default_font, bg="#2e2e2e", fg="white"
+        )
+        instruction_label.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 0))
+        
         form = ttk.Frame(tab)
-        form.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        form.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
         form.columnconfigure(1, weight=1)
 
         # Playlist
@@ -104,15 +119,29 @@ class IPTVApp:
             tab, wrap=tk.WORD, font=self.output_font,
             bg="#1e1e1e", fg="white", insertbackground="white"
         )
-        self.output_text.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0,10))
+        self.output_text.grid(row=2, column=0, sticky="nsew", padx=10, pady=(0,10))
 
     def setup_maintenance_tab(self):
         tab = self.maint_tab
-        tab.rowconfigure(2, weight=1)
+        tab.rowconfigure(3, weight=1)
         tab.columnconfigure(0, weight=1)
+        
+        instruction_text = (
+    "🛠 Maintenance Instructions:\n"
+    "| Select a maintenance task from the dropdown\n"
+    "| Some actions will auto-run, others enable extra options\n"
+    "| 'Run traceroute?' is only enabled for Connectivity\n"
+    "| Click 'Run' to execute the selected action"
+        )
+        instruction_label = tk.Label(
+            tab, text=instruction_text, justify="left", anchor="w",
+            font=self.default_font, bg="#2e2e2e", fg="white"
+        )
+        instruction_label.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 0))
+
 
         frame = ttk.Frame(tab)
-        frame.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        frame.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
         frame.columnconfigure(1, weight=1)
 
         # Action dropdown
@@ -173,7 +202,7 @@ class IPTVApp:
             tab, wrap=tk.WORD, font=self.output_font,
             bg="#1e1e1e", fg="white", insertbackground="white"
         )
-        self.maint_output.grid(row=2, column=0, sticky="nsew", padx=10, pady=(0,10))
+        self.maint_output.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0,10))
 
     def browse_file(self):
         path = filedialog.askopenfilename(filetypes=[("M3U files", "*.m3u")])
