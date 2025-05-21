@@ -6,6 +6,10 @@ echo "🔁 Running full build for .deb and .exe..."
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Clean dist folder for fresh output (optional, uncomment if desired)
+# rm -rf "$ROOT_DIR/dist"
+# mkdir -p "$ROOT_DIR/dist"
+
 # === Build .deb ===
 echo "📦 Starting .deb build..."
 bash "$SCRIPT_DIR/build_deb.sh"

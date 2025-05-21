@@ -24,6 +24,10 @@ wine "$WINE_PYEXE" -m pip install --upgrade pip pyinstaller
 
 echo "📦 Building single EXE (with embedded .bat + .ps1)…"
 cd "$(dirname "$0")/.."
+# Clean up any old .spec to force --name to work as intended
+rm -f *.spec
+mkdir -p dist
+
 wine "$WINE_PYEXE" -m PyInstaller \
     --noconfirm \
     --onefile \
@@ -31,14 +35,17 @@ wine "$WINE_PYEXE" -m PyInstaller \
     --icon="$ICON_NAME" \
     --add-data "src/win_functions.bat;." \
     --add-data "src/update.ps1;." \
+    --name "IPTVBoss_Tool" \
     "$SCRIPT_NAME"
 
 # verify
-EXE="dist/iptv_gui_full.exe"
+EXE="dist/IPTVBoss_Tool.exe"
 if [[ -f "$EXE" ]]; then
     echo "✅ EXE built: $EXE"
     echo "🎉 All-in-one! .bat is embedded in the EXE—no external files needed."
 else
     echo "❌ Build failed: $EXE missing" >&2
+    echo "Here's what is in dist/:"
+    ls -lh dist
     exit 1
 fi

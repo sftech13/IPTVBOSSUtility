@@ -22,7 +22,7 @@ def resource_path(rel_path):
 class IPTVApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("IPTV BOSS Maintenance Tool")
+        self.root.title("IPTV BOSS Utility Tool")
 
         # Fonts & theme
         self.default_font = font.Font(family="Segoe UI", size=10)
@@ -449,7 +449,7 @@ class IPTVApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    def center(win, w_pct=0.5, h_pct=0.5):
+    def center(win, w_pct=0.4, h_pct=0.5):
         win.update_idletasks()
         sw, sh = win.winfo_screenwidth(), win.winfo_screenheight()
         w, h   = int(sw*w_pct), int(sh*h_pct)
