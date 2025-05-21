@@ -1,0 +1,9 @@
+Package: IPTVBoss-Utility-Tool
+Version: 1.0
+Section: base
+Priority: optional
+Architecture: amd64
+Maintainer: SFTech13
+Depends: python3 (>= 3.8), python3-tk, ffmpeg
+Description: IPTV BOSS Utility Tool & Stream Checker
+ A tool to help with issues related to IPTV BOSS and a utility to check stream quality.
