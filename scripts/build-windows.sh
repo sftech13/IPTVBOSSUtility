@@ -22,7 +22,7 @@ fi
 echo "✅ Installing dependencies under Wine…"
 wine "$WINE_PYEXE" -m pip install --upgrade pip pyinstaller
 
-echo "📦 Building single EXE (with embedded .bat)…"
+echo "📦 Building single EXE (with embedded .bat + .ps1)…"
 cd "$(dirname "$0")/.."
 wine "$WINE_PYEXE" -m PyInstaller \
     --noconfirm \
@@ -30,6 +30,7 @@ wine "$WINE_PYEXE" -m PyInstaller \
     --windowed \
     --icon="$ICON_NAME" \
     --add-data "src/win_functions.bat;." \
+    --add-data "src/update.ps1;." \
     "$SCRIPT_NAME"
 
 # verify
