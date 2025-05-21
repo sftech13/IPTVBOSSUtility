@@ -14,6 +14,12 @@ A cross-platform (Windows & Ubuntu Linux) IPTV playlist checker and maintenance 
 * **Easy Install:** Download as `.exe` (Windows) or `.deb` (Ubuntu), with all dependencies bundled. No Python required for end users.
 
 ---
+![alt text](assets/1.png)
+![alt text](assets/2.png)
+![alt text](assets/3.png)
+![alt text](assets/4.png)
+---
+
 
 ## Quick Start
 
